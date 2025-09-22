@@ -34,7 +34,7 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 script {
-                    sh 'kubectl apply -f k8s-deployment.yaml || echo "Deployment file not found"'
+                    bat 'kubectl apply -f k8s-deployment.yaml || echo "Deployment file not found"'
                 }
             }
         }
