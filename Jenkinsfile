@@ -2,39 +2,51 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub')  // Jenkins credentials ID
-        DOCKER_IMAGE = "adimane0801/myapp"
+        DOCKER_IMAGE = "adimane0801/myapp" // Replace with your DockerHub repo
     }
-    options {
-                skipDefaultCheckout(true) // Required to clean before default checkout
-            }
 
     stages {
+
         stage('Clean Workspace') {
             steps {
                 // Deletes old files in Jenkins workspace
                 cleanWs()
             }
         }
+
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/adimane-08/myapp.git'
+                git branch: 'main', url: 'https://github.com/your-username/your-repo.git'
+            }
+        }
+
+        stage('Validate YAML') {
+            steps {
+                // Fails if any tabs are found in k8s-deployment.yaml
+                script {
+                    bat '''
+                    findstr /R "\\t" k8s-deployment.yaml && (echo Tabs found in YAML! && exit 1) || echo No tabs, YAML is clean
+                    '''
+                }
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}:v1")
+                    bat "docker build -t %DOCKER_IMAGE%:v1 ."
                 }
             }
         }
 
         stage('Push to DockerHub') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-                        docker.image("${DOCKER_IMAGE}:v1").push()
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    script {
+                        bat """
+                        echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+                        docker push %DOCKER_IMAGE%:v1
+                        """
                     }
                 }
             }
@@ -48,6 +60,16 @@ pipeline {
                     }
                 }
             }
+        }
+
+    }
+
+    post {
+        success {
+            echo "Pipeline completed successfully!"
+        }
+        failure {
+            echo "Pipeline failed. Check errors above."
         }
     }
 }
