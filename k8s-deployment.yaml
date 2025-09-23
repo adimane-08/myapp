@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       labels:
-	    app: myapp
+        app: myapp
     spec:
       containers:
       - name: myapp
@@ -30,4 +30,4 @@ spec:
     - port: 80
       targetPort: 80
       nodePort: 30080
-	 	
+     
