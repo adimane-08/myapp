@@ -10,6 +10,12 @@ pipeline {
             }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                // Deletes old files in Jenkins workspace
+                cleanWs()
+            }
+        }
         stage('Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/adimane-08/myapp.git'
