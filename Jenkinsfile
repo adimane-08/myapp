@@ -5,6 +5,9 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')  // Jenkins credentials ID
         DOCKER_IMAGE = "adimane0801/myapp"
     }
+    options {
+                skipDefaultCheckout(true) // Required to clean before default checkout
+            }
 
     stages {
         stage('Checkout Code') {
