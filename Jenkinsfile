@@ -33,8 +33,10 @@ pipeline {
 
         stage('Deploy to Minikube') {
             steps {
-                script {
-                    bat 'kubectl apply -f k8s-deployment.yaml || echo "Deployment file not found"'
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    script {
+                        bat 'kubectl apply -f k8s-deployment.yaml --validate=false || echo "Deployment file not found"'
+                    }
                 }
             }
         }
