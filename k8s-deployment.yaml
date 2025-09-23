@@ -1,9 +1,10 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: myapp-deployment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: myapp
@@ -23,15 +24,11 @@ kind: Service
 metadata:
   name: myapp-service
 spec:
+  type: NodePort
   selector:
     app: myapp
   ports:
-    - protocol: TCP
-      port: 80
+    - port: 80
       targetPort: 80
       nodePort: 30080
-<<<<<<< HEAD
-     
-=======
-  type: NodePort
->>>>>>> 7f9d6c54bec0eceada21255e1119721a3eacc278
+      type: NodePort
