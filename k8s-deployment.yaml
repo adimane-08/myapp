@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: myapp-deployment
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: myapp
@@ -13,21 +13,25 @@ spec:
         app: myapp
     spec:
       containers:
-      - name: myapp
-        image: adimane0801/myapp:v1
-        ports:
-        - containerPort: 80
+        - name: myapp
+          image: adimane0801/myapp:v1
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: myapp-service
 spec:
-  type: NodePort
   selector:
     app: myapp
   ports:
-    - port: 80
+    - protocol: TCP
+      port: 80
       targetPort: 80
       nodePort: 30080
+<<<<<<< HEAD
      
+=======
+  type: NodePort
+>>>>>>> 7f9d6c54bec0eceada21255e1119721a3eacc278
